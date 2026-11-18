@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#101b1a">
+<meta name="theme-color" content="#dcebf6">
 <title>凡尘问道 · MVP</title>
 <style>
 :root{--bg:#101b1a;--panel:#192725;--panel2:#21332f;--line:#39514a;--gold:#e8c77b;--mint:#8ed6b1;--muted:#9aafa5;--white:#edf4ec;--red:#d98c78}
@@ -102,10 +102,17 @@ button{font:inherit;color:inherit}
 .dev-trigger{border:0;background:none;padding:6px 0;cursor:pointer;letter-spacing:2px}.dev-overlay{position:fixed;inset:0;z-index:50;background:#07110fdd;display:flex;align-items:center;justify-content:center;padding:18px}.dev-panel{width:min(100%,420px);background:#20312d;border:1px solid var(--gold);padding:20px;box-shadow:0 10px 35px #0008;display:flex;flex-direction:column;gap:12px}.dev-head{display:flex;justify-content:space-between;color:var(--gold)}.dev-head button{background:none;border:0;cursor:pointer}.dev-panel p{font-size:11px;color:var(--muted);line-height:1.7}.dev-panel label{font-size:12px;color:var(--mint)}.dev-panel select,.dev-panel input{width:100%;padding:12px;background:#101b1a;border:1px solid #658070;color:var(--white);font:inherit}.dev-action{padding:12px;border:1px solid var(--gold);background:#6e5a31;color:#fff;cursor:pointer}.dev-action.secondary{background:#273e34;border-color:#567768}
 .moon.ascend-guide{animation:sun-bounce 1.6s ease-in-out infinite;outline:2px dashed var(--gold);outline-offset:9px}.shop-item.ascend-guide{outline:2px dashed var(--gold);outline-offset:3px;animation:guide-pulse 1.4s ease-in-out infinite}@keyframes guide-pulse{50%{box-shadow:0 0 22px #e8c77b99;transform:scale(1.025)}}
 .shop-item.immortal{background:radial-gradient(circle at 20% 10%,#294b55,#172b38 70%);border-color:#83c9d3;box-shadow:0 3px 0 #0b1721,inset 0 0 18px #72bfc52b}.shop-item.immortal .item-icon,.shop-item.immortal .item-name{color:#b9f4ff;text-shadow:0 0 9px #8cdce488}.shop-item.immortal .item-desc{color:#a3cbd4}.shop-item.immortal .item-progress i.filled{background:#8de5f1;border-color:#d1faff;box-shadow:0 0 8px #8de5f1}.shop-item.immortal .item-buy{color:#8bd7e3}.shop-item.immortal .item-cost{color:#8eb4c1}.shop-item.flipping{animation:card-flip .85s cubic-bezier(.25,.7,.25,1) both}@keyframes card-flip{0%{transform:perspective(700px) rotateY(0)}48%{transform:perspective(700px) rotateY(90deg) scale(1.06)}52%{transform:perspective(700px) rotateY(90deg) scale(1.06)}100%{transform:perspective(700px) rotateY(0)}}
-.toast{position:fixed;top:22%;left:50%;transform:translate(-50%,-8px);opacity:0;pointer-events:none;background:#e8c77b;color:#1b241e;padding:9px 14px;border-radius:3px;font-weight:bold;font-size:13px;transition:.2s;z-index:10;white-space:nowrap}
+.toast{position:fixed;top:22%;left:50%;transform:translate(-50%,-8px);opacity:0;pointer-events:none;background:#e8c77b;color:#1b241e;padding:9px 14px;border-radius:3px;font-weight:bold;font-size:13px;transition:.2s;z-index:80;white-space:normal;text-align:center;max-width:calc(100vw - 32px);min-width:max-content}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 @media(min-height:800px){.game{padding-top:26px;gap:18px}.scene{min-height:340px}}
 
+/* MVP08: 隐藏测试入口、仙髓双格与尚未凝聚的蓝色封印 */
+.header-secret{border:0;background:transparent;color:inherit;font:inherit;letter-spacing:inherit;padding:5px 1px;cursor:pointer}
+.item-progress i.sealed{border-color:#83c9d3;background:#163d48;box-shadow:inset 0 0 3px #8de5f155}
+.shop-item.immortal .item-progress{grid-template-columns:repeat(2,9px)}
+.shop-item.immortal .item-progress i{width:9px;height:15px;background:#163d48;border-color:#83c9d3}
+.shop-item.immortal .item-progress i:nth-child(3n){height:15px}
+.shop-item.immortal .item-progress i.filled{background:#8de5f1}
 /* MVP07: 纯文字渡劫，无外框；人物恢复固定原始造型 */
 .tribulation-button{position:absolute;z-index:7;left:50%;top:50%;transform:translate(-50%,-35%);width:32px;height:64px;display:none;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:0;outline:0;border-radius:0;background:transparent;color:#ffe4a0;font-size:18px;font-weight:bold;line-height:1.1;text-shadow:0 1px 5px #14231f,0 0 9px #e8c77b;box-shadow:none;cursor:pointer;padding:0;animation:trib-text-pulse 1.8s ease-in-out infinite}
 .tribulation-button:active{color:#fff4cd;background:transparent}
@@ -113,11 +120,111 @@ button{font:inherit;color:inherit}
 @keyframes trib-text-pulse{50%{color:#fff3c9;text-shadow:0 0 13px #ffe6a5,0 0 5px #e8c77b}}
 @keyframes trib-text-pop{0%{transform:translate(-50%,-35%) scale(.8);color:#e8c77b}58%{transform:translate(-50%,-35%) scale(1.09);color:#fff7d4}78%{transform:translate(-50%,-35%) scale(.97)}100%{transform:translate(-50%,-35%) scale(1)}}
 @media(prefers-reduced-motion:reduce){.tribulation-button,.tribulation-button.trib-click{animation:none}}
+
+/* MVP11 · 化仙天劫：五秒连续点击，成功后永久切换清明仙界色调 */
+/* MVP12 · 尸解仙后蓝白色仙界视觉，保持原有像素构图 */
+body.ascended{--bg:#dcebf6;--panel:#f2f8ff;--panel2:#e2effa;--line:#94b9d7;--gold:#527fbd;--mint:#6caed3;--muted:#527c9e;--white:#244963;--red:#b96b75;background:radial-gradient(ellipse at 50% 8%,#ffffff 0%,#d9edff 46%,#b9d9ef 100%);color:var(--white)}
+body.ascended .top,body.ascended .footer{color:#527c9e}
+body.ascended .brand,body.ascended .realm,body.ascended .shop-title{color:#376fae;text-shadow:1px 1px #fff}
+body.ascended .panel{background:linear-gradient(180deg,#f9fcff,#e1effb);box-shadow:0 4px 0 #9dbed7;border-color:#91b8d8}
+body.ascended .scene{background:linear-gradient(180deg,#eaf8ff,#c7e5f7 65%,#a7cfe9);border-color:#86b4d4;box-shadow:0 4px 0 #9bbbd2}
+body.ascended .scene:before{background:#a9cde7;opacity:.72}body.ascended .scene:after{background:#e2f5ff;opacity:.9}
+body.ascended .stat{background:#e8f4ff;border-color:#9dbfdb;color:#315f83}
+body.ascended .bar{background:#d2e6f6;border-color:#88b4d3}body.ascended .fill{background:repeating-linear-gradient(90deg,#75b9e5 0 9px,#a4d6f2 9px 12px);box-shadow:0 0 10px #83c9ee99}
+body.ascended .tap{background:linear-gradient(180deg,#ecf8ff,#c5e3f8);color:#245579;border-color:#82b2d2;box-shadow:0 4px 0 #9abed7}
+body.ascended .shop-screen{background:radial-gradient(ellipse at 50% 10%,#fff,#deeffc 55%,#b9d9ef)}
+body.ascended .shop-item{background:linear-gradient(180deg,#f7fcff,#dbeefa);border-color:#98bfda;box-shadow:0 3px 0 #a5c7dd;color:#295471}
+body.ascended .shop-intro,body.ascended .scene-hint{color:#3b7396}
+body.ascended .moon{background:#fffbea;box-shadow:0 0 28px #ffffff,0 0 44px #a2d5f6}
+body.ascended .log,body.ascended .smallbtn{color:#315f83}
+/* MVP14 · 仙界主题交互色与修士服饰修正 */
+body.ascended .tap strong{color:#194d78;text-shadow:0 1px 0 #fff}
+body.ascended .tap span{color:#386f98}
+body.ascended .tap.is-clicking{background:#a8d9f5;color:#17456d}
+body.ascended .tap.is-clicking strong{color:#17456d}
+body.ascended .tap.is-clicking span{color:#285e85}
+body.ascended .tap::after,body.ascended .smallbtn::after{border-color:#5d9fcf}
+body.ascended .shop-back,body.ascended .shop-screen .smallbtn{background:linear-gradient(180deg,#f8fcff,#c8e5f8);border:1px solid #84b4d6;color:#24577f;box-shadow:0 4px 0 #9dbfd9}
+body.ascended .shop-back:active{box-shadow:0 2px 0 #9dbfd9}
+body.ascended .shop-screen .ui-pop{background:#a8d9f5!important;color:#17456d!important}
+body.ascended .shop-screen .ui-pop::after{border-color:#5d9fcf}
+body.ascended .meditator .head{border:0;background:#f2d9b5;box-shadow:inset 0 -2px #d5b996}
+body.ascended .meditator .body{background:#eaf7ff;border-bottom:5px solid #8dc2e9}
+body.ascended .meditator .robe{background:#a8d4f2}
+body.ascended .meditator{filter:drop-shadow(0 0 12px #d7f4ff99)}
+
+.scene.trial-shaking{animation:trial-shake .22s linear infinite}
+@keyframes trial-shake{0%,100%{transform:translate(0,0)}25%{transform:translate(-3px,2px)}50%{transform:translate(3px,-2px)}75%{transform:translate(-2px,-2px)}}
+.trial-orb{position:absolute;inset:0;z-index:12;display:none;align-items:center;justify-content:center;flex-direction:column;gap:22px;background:#0d1b20b8;touch-action:manipulation;user-select:none;cursor:pointer}
+.trial-orb.active{display:flex}
+/* 平面纯白发光球：不使用球面高光、立体渐变或阴影塑形 */
+.orb-sphere{position:relative;width:108px;height:108px;border-radius:50%;background:#fff;box-shadow:0 0 22px 12px #fff9,0 0 60px 26px #e8faff99,0 0 105px 40px #c4eaff66;opacity:0;transform:scale(.18);animation:orb-appear 2s ease-out forwards;pointer-events:none}
+/* 每次有效点击都重播冲击波，且不重置光球的呼吸动画 */
+.trial-orb .orb-sphere::after{content:"";position:absolute;inset:-9px;border:3px solid #fff;border-radius:50%;opacity:0;pointer-events:none}
+.trial-orb.hit .orb-sphere::after{animation:orb-hit-ring .22s ease-out both}
+@keyframes orb-hit-ring{0%{opacity:.95;transform:scale(.8)}100%{opacity:0;transform:scale(1.65)}}
+.scene.trial-hit-shake{animation:trial-hit-shake .16s linear both!important}
+@keyframes trial-hit-shake{0%,100%{transform:translate(0,0)}20%{transform:translate(-7px,3px)}45%{transform:translate(6px,-4px)}70%{transform:translate(-4px,-2px)}85%{transform:translate(3px,2px)}}
+@keyframes orb-appear{to{opacity:1;transform:scale(1)}}
+.trial-orb.ready .orb-sphere{opacity:1;transform:scale(1);animation:orb-breathe .7s ease-in-out infinite alternate}
+@keyframes orb-breathe{from{opacity:1;transform:scale(1);box-shadow:0 0 22px 12px #fff9,0 0 60px 26px #e8faff99,0 0 105px 40px #c4eaff66}to{opacity:1;transform:scale(1.09);box-shadow:0 0 32px 17px #fffc,0 0 75px 32px #e4faffaa}}
+.trial-orb .orb-text{color:#f5ffff;text-shadow:0 0 8px #e2fbff;font-size:13px;letter-spacing:2px;text-align:center;line-height:1.8;padding:0 15px}
+.trial-orb .orb-counter{font-size:12px;color:#d4f6ff;letter-spacing:1px}
+.trial-orb.shattered .orb-sphere{animation:orb-shatter .7s ease-out forwards}
+@keyframes orb-shatter{0%{opacity:1;transform:scale(1)}35%{transform:scale(1.35);filter:brightness(3)}100%{transform:scale(2.3);opacity:0;filter:brightness(5)}}
+.trial-orb.shattered{animation:orb-fade .8s ease-in forwards}@keyframes orb-fade{70%{opacity:1}100%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.scene.trial-shaking,.scene.trial-hit-shake{animation:none!important}}
+
+/* MVP16 · 尸解仙后坊市独立配色：灰青底色、暖橙点缀；不影响蓝白色主界面 */
+body.ascended .shop-screen{
+  --bg:#1b292c;--panel:#304348;--panel2:#26383d;--line:#647c7c;
+  --gold:#e7a469;--mint:#efb781;--muted:#a9c0bd;--white:#e7eeee;
+  background:radial-gradient(ellipse at 50% 10%,#455a5c 0%,#2a3c40 46%,#18282c 100%);
+  color:var(--white);
+}
+body.ascended .shop-screen .panel{background:linear-gradient(180deg,#374b50,#293c40);border-color:#68817f;box-shadow:0 4px 0 #142428}
+body.ascended .shop-screen .brand,body.ascended .shop-screen .shop-title{color:#efb17c;text-shadow:1px 1px #49352c}
+body.ascended .shop-screen .eyebrow,body.ascended .shop-screen .shop-subtitle{color:#c2d1cb}
+body.ascended .shop-screen .shop-intro{color:#c2d3cf}
+body.ascended .shop-screen .shop-item:not(.immortal){background:linear-gradient(180deg,#35494c,#27383c);border-color:#69817e;box-shadow:0 3px 0 #172629;color:#e7eeee}
+body.ascended .shop-screen .shop-item:not(.immortal) .item-name{color:#edf3ef}
+body.ascended .shop-screen .shop-item:not(.immortal) .item-icon{color:#e7a469}
+body.ascended .shop-screen .shop-item:not(.immortal) .item-desc{color:#b7c9c4}
+body.ascended .shop-screen .shop-item:not(.immortal) .item-buy{color:#f0b681}
+body.ascended .shop-screen .shop-item:not(.immortal) .item-cost{color:#b8cbc5}
+body.ascended .shop-screen .shop-item:not(.immortal) .item-progress i.filled{background:#e7a469;border-color:#f5c696;box-shadow:0 0 7px #e7a46977}
+body.ascended .shop-screen .shop-back,body.ascended .shop-screen .smallbtn{background:linear-gradient(180deg,#4a6264,#354b50);border:1px solid #849994;color:#f4d5b7;box-shadow:0 4px 0 #1b2d30}
+body.ascended .shop-screen .shop-back:active{box-shadow:0 2px 0 #1b2d30}
+body.ascended .shop-screen .ui-pop{background:#e7a469!important;color:#243539!important}
+body.ascended .shop-screen .ui-pop::after{border-color:#ffd1a4}
+body.ascended .shop-screen .shop-item.ui-pop .item-name,body.ascended .shop-screen .shop-item.ui-pop .item-desc,body.ascended .shop-screen .shop-item.ui-pop .item-buy,body.ascended .shop-screen .shop-item.ui-pop .item-cost{color:#243539}
+body.ascended .shop-screen .shop-item.immortal{background:radial-gradient(circle at 20% 10%,#294b55,#172b38 70%);border-color:#83c9d3;box-shadow:0 3px 0 #0b1721,inset 0 0 18px #72bfc52b}
+body.ascended .shop-screen .shop-item.immortal .item-name,body.ascended .shop-screen .shop-item.immortal .item-icon{color:#b9f4ff}
+body.ascended .shop-screen .shop-item.immortal .item-desc{color:#a3cbd4}
+body.ascended .shop-screen .shop-item.immortal .item-buy{color:#8bd7e3}
+body.ascended .shop-screen .shop-item.immortal .item-cost{color:#8eb4c1}
+body.ascended .shop-screen .shop-item.immortal .item-progress i.filled{background:#8de5f1;border-color:#d1faff}
+body.ascended .shop-screen .footer{color:#a9c0bd}
+
+
+/* MVP17 · 化仙天劫确认弹窗 */
+.heaven-confirm{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;padding:22px;background:#071617cc;backdrop-filter:blur(3px)}
+.heaven-confirm.open{display:flex}
+.heaven-dialog{width:min(100%,390px);background:linear-gradient(180deg,#273d3b,#172b2a);border:2px solid #c9ad72;box-shadow:0 8px 0 #071713,0 0 40px #d5c58a24;padding:22px 18px 18px;text-align:center;color:#f1e7ce}
+.heaven-dialog-title{font-size:21px;letter-spacing:5px;color:#e9cc8c;margin-bottom:17px}
+.heaven-dialog-message{font-size:15px;line-height:2.05;letter-spacing:1px;margin:0 0 22px}
+.heaven-dialog-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.heaven-dialog-actions button{position:relative;overflow:hidden;min-height:48px;border:1px solid #bfa36d;background:#324743;color:#f3dfb2;font:inherit;font-size:15px;letter-spacing:1px;cursor:pointer;touch-action:manipulation}
+.heaven-dialog-actions button:first-child{background:#7d6240;color:#fff2d8}
+.heaven-dialog-actions button.dialog-pop{animation:heaven-dialog-pop .42s cubic-bezier(.2,1.7,.3,1) both}
+.heaven-dialog-actions button.dialog-pop::after{content:"";position:absolute;inset:0;border:2px solid #ffe6a5;pointer-events:none;animation:heaven-dialog-border .3s ease-out both}
+@keyframes heaven-dialog-pop{0%{transform:scale(.8);filter:brightness(1.5)}65%{transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes heaven-dialog-border{0%{clip-path:inset(0 100% 100% 0)}50%{clip-path:inset(0 0 100% 0)}100%{clip-path:inset(0 0 0 0)}}
 </style>
 </head>
 <body>
 <main class="game">
-  <header class="top"><button class="brand dev-trigger" id="devOpen" type="button">◈ 凡尘问道</button><span>OFFLINE · MVP 06</span></header>
+  <header class="top"><button class="brand dev-trigger" id="devOpen" type="button">◈ 凡尘问道</button><span><button class="header-secret" id="devOffline" type="button">OFFLINE</button> · <button class="header-secret" id="devMvp" type="button">MVP</button> 08</span></header>
 
   <section class="panel" id="cultivationPanel">
     <div class="realm-row">
@@ -138,6 +245,7 @@ button{font:inherit;color:inherit}
   <section class="scene" id="scene">
     <div class="stars"></div><button class="moon" id="sunButton" aria-label="坊市入口" title="坊市入口" type="button"></button>
     <div class="meditator" id="meditator" data-realm="0" aria-hidden="true"><div class="aura"></div><div class="halo"></div><div class="crown"></div><div class="head"></div><div class="body"></div><div class="robe"></div><div class="sash"></div><div class="clouds"></div></div><button id="tribulationButton" class="tribulation-button" type="button" aria-label="渡劫突破境界"><span>渡</span><span>劫</span></button>
+    <div class="trial-orb" id="trialOrb" role="button" tabindex="0" aria-label="连续点击光球渡劫"><div class="orb-sphere"></div><div class="orb-text" id="orbText">天劫凝聚中……</div></div>
     <div class="scene-hint" id="sceneHint">凝神静气，感应天地灵气</div>
   </section>
 
@@ -186,6 +294,7 @@ button{font:inherit;color:inherit}
     <div class="footer"><span>坊市 · 初次开放</span><span>版本 0.1</span></div>
   </div>
 </section>
+<section class="heaven-confirm" id="heavenConfirm" role="dialog" aria-modal="true" aria-labelledby="heavenConfirmTitle" aria-describedby="heavenConfirmMessage"><div class="heaven-dialog"><div class="heaven-dialog-title" id="heavenConfirmTitle">天劫将至</div><p class="heaven-dialog-message" id="heavenConfirmMessage">通过连续点击光球稳住元魂以成功渡劫，此番万不可懈怠，若渡劫失败则境界修为全部归零。</p><div class="heaven-dialog-actions"><button type="button" id="heavenAccept">直面天劫</button><button type="button" id="heavenDecline">容我三思</button></div></div></section>
 <section class="dev-overlay" id="devOverlay" aria-label="测试修改器" role="dialog" aria-modal="true" style="display:none"><div class="dev-panel"><div class="dev-head"><strong>◈ 修行修改器</strong><button id="devClose" type="button">✕</button></div><p>仅供 MVP 测试 · 修改将写入本地存档</p><label for="devRealm">切换境界</label><select id="devRealm"></select><label for="devPower">增加修为（突破需手动点击渡劫）</label><input id="devPower" type="number" min="1" step="1" value="1000" inputmode="numeric"><button class="dev-action" id="devAdd" type="button">增加修为</button><button class="dev-action secondary" id="devSetRealm" type="button">切换至所选境界</button><button class="dev-action secondary" id="devExit" type="button">关闭修改器</button></div></section>
 <div class="toast" id="toast">境界突破！</div>
 <script>
@@ -193,8 +302,9 @@ button{font:inherit;color:inherit}
   const realms = ["练气","筑基","化晶","结丹","金丹","元婴","化仙","尸解仙","人仙","地仙","神仙","天仙","大罗金仙"];
   const TRIAL_AT = 6; // 化仙圆满后渡劫
   const TRIAL_NEED = 200;
+  // 5 秒结束后按点击次数判定成功率：1–20 次 40%，21–80 次 70%，81 次起必定成功。
   const SAVE_KEY = "fanchen_wendao_mvp_v1";
-  let state = {realm:0, power:0, total:0, breakthroughs:0, trial:0, inTrial:false, qiDanLevel:0, immortalFlipped:false};
+  let state = {realm:0, power:0, total:0, breakthroughs:0, trial:0, inTrial:false, qiDanLevel:0, immortalFlipped:false,immortalEssence:0,immortalEssencePurchased:0};
   const $ = id => document.getElementById(id);
   const fmt = n => Math.floor(n).toLocaleString("zh-CN");
   function need(){ return 100 * Math.pow(2, state.realm); }
@@ -204,10 +314,14 @@ button{font:inherit;color:inherit}
   function load(){
     try{
       const raw=localStorage.getItem(SAVE_KEY);
-      if(raw){const parsed=JSON.parse(raw); if(parsed && Number.isInteger(parsed.realm) && parsed.realm>=0 && parsed.realm<realms.length) state={...state,...parsed,qiDanLevel:Math.max(0,Math.min(12,Number(parsed.qiDanLevel)||0))};}
+      if(raw){const parsed=JSON.parse(raw); if(parsed && Number.isInteger(parsed.realm) && parsed.realm>=0 && parsed.realm<realms.length) state={...state,...parsed,qiDanLevel:Math.max(0,Math.min(12,Number(parsed.qiDanLevel)||0)),immortalEssence:Math.max(0,Math.min(2,Math.floor(Number(parsed.immortalEssence)||0))),immortalEssencePurchased:Math.max(0,Math.floor(Number(parsed.immortalEssencePurchased ?? parsed.immortalEssence)||0))};}
     }catch(e){}
   }
-  function toast(message){const el=$("toast");el.textContent=message;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),1100);}
+  let toastTimer=null;
+  function hideToast(){clearTimeout(toastTimer);$("toast").classList.remove("show");}
+  function toast(message,duration=1100){const el=$("toast");clearTimeout(toastTimer);el.textContent=message;el.classList.add("show");toastTimer=setTimeout(()=>el.classList.remove("show"),duration);}
+  // 任意一次新点击立即收起上一条提示，不干扰本次点击触发的新提示。
+  document.addEventListener("pointerdown",()=>{if($("toast").classList.contains("show"))hideToast();},true);
   function note(title, body){$("log").innerHTML="<strong>"+title+"</strong><br>"+body;}
   function updateMarketAccess(){
     const sun=$("sunButton");
@@ -261,16 +375,23 @@ button{font:inherit;color:inherit}
     const flipped=!!state.immortalFlipped;
     $("qiDanCard").classList.toggle("immortal",flipped);
     $("qiDanName").textContent=flipped?"仙髓":"聚气丹";
-    $("qiDanDesc").textContent=flipped?"凡丹蜕变，凝成仙髓。仙阶效果尚待开启。":"凝聚天地灵气，辅助修士吐纳修行。";
-    $("qiDanAction").textContent=flipped?"仙阶待启":state.qiDanLevel>=12?"已圆满":"购买";
-    $("qiDanCost").textContent=flipped?"效果待开放":state.qiDanLevel>=12?"已满级":"-"+fmt(qiCost())+" 修为";
-    $("qiDanCard").setAttribute("aria-label",flipped?"仙髓，后续效果尚未开放":canFlipQiDan()?"点击聚气丹完成仙髓蜕变":"购买聚气丹，消耗"+qiCost()+"修为");
+    $("qiDanDesc").textContent=flipped?"凡丹蜕变，凝成仙髓。凝聚仙髓，助你突破地仙之关。":"凝聚天地灵气，辅助修士吐纳修行。";
+    $("qiDanAction").textContent=flipped?"凝聚":state.qiDanLevel>=10?"我们...到头了吗...？":"购买";
+    $("qiDanCost").textContent=flipped?(state.immortalEssence>=2?"已凝聚圆满":"-"+fmt(state.immortalEssence===0?50000:100000)+" 修为"):state.qiDanLevel>=10?"":"-"+fmt(qiCost())+" 修为";
+    $("qiDanCard").setAttribute("aria-label",flipped?"仙髓，点击凝聚，本次消耗"+(state.immortalEssence===0?"五万":"十万")+"修为":canFlipQiDan()?"点击聚气丹完成仙髓蜕变":state.qiDanLevel>=10?"聚气丹已达凡阶上限":"购买聚气丹，消耗"+qiCost()+"修为");
   }
   function renderQiDanProgress(){
     const cells=$("qiDanProgress").querySelectorAll("i");
-    cells.forEach((cell,index)=>cell.classList.toggle("filled",index<state.qiDanLevel));
+    const flipped=!!state.immortalFlipped;
+    cells.forEach((cell,index)=>{
+      cell.style.display=flipped && index>=2?"none":"";
+      cell.classList.toggle("filled",flipped?index<state.immortalEssence:index<state.qiDanLevel);
+      cell.classList.toggle("sealed",!flipped && index>=10);
+    });
+    $("qiDanProgress").setAttribute("aria-label",flipped?"仙髓进度，共两格，已凝聚"+state.immortalEssence+"格":"聚气丹进度，十格可购买，两格仙阶封印");
   }
   function render(){
+    document.body.classList.toggle("ascended",state.realm>=7);
     $("tribulationButton").style.display=state.realm<realms.length-1 && state.power>=need()?"flex":"none";
     $("realmName").textContent=realms[state.realm];
     $("realmCount").textContent=`第 ${state.realm+1} / ${realms.length} 境`;
@@ -289,8 +410,8 @@ button{font:inherit;color:inherit}
       $("cultivationText").textContent=`${fmt(state.power)} / ${fmt(need())}`;
       $("cultivationFill").style.width=Math.min(100,state.power/need()*100)+"%";
       $("tapTitle").textContent=state.realm===realms.length-1?"继续参悟":"点击修炼";
-      $("tapSub").textContent=state.realm===realms.length-1?"你已抵达当前版本的最高境界":`每次点击获得 ${1+state.qiDanLevel} 点修为`;
-      $("sceneHint").textContent=state.power>=need()&&state.realm<12?"修为已满 · 点击人物渡劫，或继续积累":state.realm>=6?"仙气流转，继续参悟大道":"凝神静气，感应天地灵气";
+      $("tapSub").textContent=state.realm===realms.length-1?"你已抵达当前版本的最高境界":`每次点击获得 ${1+state.qiDanLevel+100*state.immortalEssencePurchased} 点修为`;
+      $("sceneHint").textContent=state.power>=need()&&state.realm===8&&state.immortalEssence<1?"修为已满 · 地仙渡劫还需一格仙髓":state.power>=need()&&state.realm<12?"修为已满 · 点击人物渡劫，或继续积累":state.realm>=6?"仙气流转，继续参悟大道":"凝神静气，感应天地灵气";
     }
     updateMarketAccess();
     renderQiDanProgress();
@@ -302,9 +423,88 @@ button{font:inherit;color:inherit}
     toast("化仙机缘：点击太阳，前往山间坊市");
   }
   // 手动逐境渡劫：只扣本境界所需修为，所有溢出修为留给下一境界。
-  function breakthrough(){
+  let orbPhase="idle",orbHits=0,orbReadyTimer=null,orbFinishTimer=null,orbHitTimer=null;
+  function orbHitFeedback(){
+    // Safari/iOS 通常不支持 Web Vibration API；支持的平台才会实际震动。
+    if(typeof navigator.vibrate==="function")navigator.vibrate(35);
+    const orb=$("trialOrb"),scene=$("scene");
+    orb.classList.remove("hit");scene.classList.remove("trial-hit-shake");
+    void orb.offsetWidth; // 重启逐次点击动画
+    orb.classList.add("hit");scene.classList.add("trial-hit-shake");
+    clearTimeout(orbHitTimer);orbHitTimer=setTimeout(()=>{orb.classList.remove("hit");scene.classList.remove("trial-hit-shake");},175);
+  }
+  function clearOrb(){
+    clearTimeout(orbReadyTimer);clearTimeout(orbFinishTimer);clearTimeout(orbHitTimer);
+    orbPhase="idle";orbHits=0;
+    const orb=$("trialOrb");orb.classList.remove("active","ready","shattered","hit");
+    $("scene").classList.remove("trial-shaking","trial-hit-shake");
+  }
+  function showHeavenConfirm(){
+    if(orbPhase!=="idle")return;
+    $("heavenConfirm").classList.add("open");
+    $("heavenAccept").focus();
+  }
+  function hideHeavenConfirm(){ $("heavenConfirm").classList.remove("open"); }
+  function animateHeavenChoice(button,callback){
+    button.classList.remove("dialog-pop");void button.offsetWidth;button.classList.add("dialog-pop");
+    setTimeout(()=>{button.classList.remove("dialog-pop");callback();},320);
+  }
+  $("heavenAccept").addEventListener("click",()=>animateHeavenChoice($("heavenAccept"),()=>{hideHeavenConfirm();startHeavenTrial();}));
+  $("heavenDecline").addEventListener("click",()=>animateHeavenChoice($("heavenDecline"),hideHeavenConfirm));
+  function startHeavenTrial(){
+    if(orbPhase!=="idle")return;
+    orbPhase="forming";orbHits=0;
+    const orb=$("trialOrb");orb.classList.remove("ready","shattered");orb.classList.add("active");
+    $("scene").classList.add("trial-shaking");
+    $("orbText").textContent="天劫将至 · 凝神聚气";
+    $("tribulationButton").style.display="none";
+    orbReadyTimer=setTimeout(()=>{
+      if(orbPhase!=="forming")return;
+      orbPhase="tapping";orb.classList.add("ready");
+      $("orbText").textContent="持续点击稳住元魂";
+      orbFinishTimer=setTimeout(finishHeavenTrial,5000);
+    },2000);
+  }
+  function finishHeavenTrial(){
+    if(orbPhase!=="tapping")return;
+    // 仅在完整 5 秒结束时结算，防止高频点击提前结束渡劫。
+    const successRate=orbHits===0?0:orbHits<=20?.4:orbHits<=80?.7:1;
+    if(Math.random()>=successRate){
+      // 天劫失败：跌回练气，修为清零，仅保留聚气丹购买进度及其点击加成。
+      const retainedQiDanLevel=state.qiDanLevel;
+      clearOrb();
+      state={realm:0,power:0,total:0,breakthroughs:0,trial:0,inTrial:false,qiDanLevel:retainedQiDanLevel,immortalFlipped:false,immortalEssence:0,immortalEssencePurchased:0};
+      $("sunButton").classList.remove("ascend-guide");
+      $("qiDanCard").classList.remove("ascend-guide","flipping");
+      closeMarket();
+      render();save();
+      note("天劫失败 · 重返练气","元魂未能稳固，境界跌回<strong>练气</strong>，修为尽失。聚气丹进度得以保留。");
+      toast("天劫失败 · 跌回练气",5000);
+      return;
+    }
+    orbPhase="shattering";
+    const orb=$("trialOrb");orb.classList.remove("ready");orb.classList.add("shattered");
+    $("scene").classList.remove("trial-shaking","trial-hit-shake");
+    $("orbText").textContent="天光破晓 · 渡劫成功";
+    orbFinishTimer=setTimeout(()=>{clearOrb();breakthrough(true);},800);
+  }
+  $("trialOrb").addEventListener("pointerdown",event=>{
+    if(orbPhase!=="tapping")return;
+    event.preventDefault();
+    orbHits++;orbHitFeedback();
+
+  });
+  // 键盘可访问性；触屏只使用 pointerdown，避免 iOS 合成 click 重复计数。
+  $("trialOrb").addEventListener("keydown",event=>{
+    if((event.key==="Enter"||event.key===" ")&&orbPhase==="tapping"){event.preventDefault();orbHits++;orbHitFeedback();}
+  });
+  function breakthrough(trialCompleted=false){
     if(state.realm>=realms.length-1||state.power<need())return;
+    if(state.realm===TRIAL_AT&&!trialCompleted){showHeavenConfirm();return;}
+    // 人仙（索引8）突破地仙（索引9）须消耗一格仙髓。
+    if(state.realm===8 && state.immortalEssence<1){toast("若无仙髓扶我，此番渡劫九死一生",5000);return;}
     const oldIndex=state.realm, old=realms[oldIndex], cost=need();
+    if(oldIndex===8)state.immortalEssence--;
     state.power-=cost;
     state.realm++;
     state.breakthroughs++;
@@ -320,7 +520,8 @@ button{font:inherit;color:inherit}
     render();save();
   }
   function tap(){
-    const gain=1+state.qiDanLevel;
+    if(orbPhase!=="idle")return;
+    const gain=1+state.qiDanLevel+100*state.immortalEssencePurchased;
     state.power+=gain;
     state.total+=gain;
     render();save();
@@ -344,7 +545,18 @@ button{font:inherit;color:inherit}
   $("shopBackBottom").addEventListener("click",()=>{animateUI($("shopBackBottom"));closeMarket();});
   function buyQiDan(){
     const card=$("qiDanCard");
-    if(state.immortalFlipped){toast("仙髓后续效果即将开放");return;}
+    if(state.immortalFlipped){
+      animateUI(card);
+      if(state.immortalEssence>=2){toast("仙髓已凝聚圆满（2/2）");return;}
+      const essenceCost=state.immortalEssence===0?50000:100000;
+      if(state.power<essenceCost){toast("修为不足，凝聚仙髓需要 "+fmt(essenceCost)+" 修为");return;}
+      state.power-=essenceCost;
+      state.immortalEssence++;
+      state.immortalEssencePurchased++;
+      render();save();
+      toast("道心凝华");
+      return;
+    }
     if(canFlipQiDan()){
       card.classList.remove("ascend-guide");
       card.classList.add("flipping");
@@ -353,7 +565,7 @@ button{font:inherit;color:inherit}
       return;
     }
     animateUI(card);
-    if(state.qiDanLevel>=12){toast("聚气丹效果已修至圆满");return;}
+    if(state.qiDanLevel>=10){toast("聚气丹已达凡阶上限，待化仙后凝聚仙髓");return;}
     if(state.inTrial){toast("渡劫期间无法购买");return;}
     const cost=qiCost();
     if(state.power<cost){toast("修为不足，需要 "+fmt(cost)+" 点修为");return;}
@@ -374,7 +586,8 @@ button{font:inherit;color:inherit}
   $("resetButton").addEventListener("click",()=>{
     playClickAnimation($("resetButton"));
     if(confirm("确定要清空本设备保存的修行进度，从练气重新开始吗？")){
-      state={realm:0,power:0,total:0,breakthroughs:0,trial:0,inTrial:false,qiDanLevel:0,immortalFlipped:false};
+      clearOrb();
+      state={realm:0,power:0,total:0,breakthroughs:0,trial:0,inTrial:false,qiDanLevel:0,immortalFlipped:false,immortalEssence:0,immortalEssencePurchased:0};
       save();render();note("修行重启","你再次踏入仙途，一切从练气开始。");toast("已重置");
     }
   });
@@ -382,16 +595,27 @@ button{font:inherit;color:inherit}
   realms.forEach((name,index)=>{const option=document.createElement("option");option.value=index;option.textContent=`第 ${index+1} 境 · ${name}`;devRealm.appendChild(option);});
   function devOpen(){devRealm.value=state.realm;$("devOverlay").style.display="flex";}
   function devClose(){$("devOverlay").style.display="none";}
-  $("devOpen").addEventListener("click",devOpen);
+  // 依次点击标题、OFFLINE、MVP 才能进入修改器；误触或超时则重新开始。
+  let devSequence=0,devSequenceAt=0;
+  function devSecretStep(step){
+    const now=Date.now();
+    if(now-devSequenceAt>4000)devSequence=0;
+    if(step===devSequence){devSequence++;devSequenceAt=now;if(devSequence===3){devSequence=0;devOpen();}}
+    else{devSequence=step===0?1:0;devSequenceAt=now;}
+  }
+  $("devOpen").addEventListener("click",()=>devSecretStep(0));
+  $("devOffline").addEventListener("click",()=>devSecretStep(1));
+  $("devMvp").addEventListener("click",()=>devSecretStep(2));
   $("devClose").addEventListener("click",devClose);
   $("devExit").addEventListener("click",devClose);
   $("devSetRealm").addEventListener("click",()=>{
     const target=Number(devRealm.value);
     if(!Number.isInteger(target)||target<0||target>=realms.length)return;
     const old=state.realm;
+    clearOrb();
     state.realm=target;state.power=0;state.trial=0;state.inTrial=false;state.breakthroughs=Math.max(state.breakthroughs,target);
     render();save();devClose();note("测试修改器","已从"+realms[old]+"切换至"+realms[target]);
-    if(target>=6&&!state.immortalFlipped)promptAscension();
+    if(canFlipQiDan()&&!state.immortalFlipped)promptAscension();
     else if(target===1)promptMarket();
   });
   $("devAdd").addEventListener("click",()=>{
