@@ -370,6 +370,22 @@ body.ascended .scene{background-image:url("data:image/png;base64,iVBORw0KGgoAAAA
   }
 }
 </style>
+
+<style id="character-only-click-feedback">
+/* 点击修炼只让人物精灵轻微震动，背景、点击区域、光圈、阵法均不动。 */
+#scene.gentle-impact {animation:none!important;translate:none!important;}
+#scene .meditator.character-click-impact::before {
+  animation:character-click-nudge 135ms steps(1,end) both!important;
+}
+@keyframes character-click-nudge {
+  0%,100% {translate:0 0}
+  30% {translate:-1px 0}
+  65% {translate:1px 0}
+}
+@media(prefers-reduced-motion:reduce) {
+  #scene .meditator.character-click-impact::before {animation:none!important;translate:none!important}
+}
+</style>
 </head>
 <body>
 <main class="game">
@@ -735,7 +751,12 @@ body.ascended .scene{background-image:url("data:image/png;base64,iVBORw0KGgoAAAA
     if(event.target.closest("button")||event.target.closest("#trialOrb")||orbPhase!=="idle")return;
     tap();
     spiritBurst(event.clientX,event.clientY,clickGain());
-    const stage=$('scene');stage.classList.remove('gentle-impact');void stage.offsetWidth;stage.classList.add('gentle-impact');
+    const character=$("meditator");
+    character.classList.remove("character-click-impact");
+    void character.offsetWidth;
+    character.classList.add("character-click-impact");
+    clearTimeout(character._clickImpactTimer);
+    character._clickImpactTimer=setTimeout(()=>character.classList.remove("character-click-impact"),145);
   });
   document.querySelectorAll("[data-tech]").forEach(btn=>btn.addEventListener("click",()=>{
     const panel=btn.closest(".technique"),opening=!panel.classList.contains("open");
