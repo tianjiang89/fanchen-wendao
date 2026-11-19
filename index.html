@@ -386,6 +386,26 @@ body.ascended .scene{background-image:url("data:image/png;base64,iVBORw0KGgoAAAA
   #scene .meditator.character-click-impact::before {animation:none!important;translate:none!important}
 }
 </style>
+
+<style id="playtest-feedback-fixes-v2">
+/* 元婴、化仙法阵使用相同的素材比例及透视定位，避免被拉伸造成下移。 */
+#scene #meditator:is([data-realm="5"],[data-realm="6"]) .yuanying-halo-layer,
+#scene #meditator:is([data-realm="5"],[data-realm="6"]) .yuanying-formation-layer{
+  background-size:contain!important;
+  background-position:center bottom!important;
+}
+/* 点击反馈在独立 translate 轨道上运行，不覆盖化仙的上下浮动 transform 动画。 */
+#scene #meditator.character-click-impact::before {
+  animation:character-click-nudge 135ms steps(1,end) both!important;
+}
+#scene #meditator[data-realm="6"].character-click-impact::before {
+  animation:huaxianMeditationBob 2080ms ease-in-out infinite, character-click-nudge 135ms steps(1,end) both!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #scene #meditator.character-click-impact::before,
+ #scene #meditator[data-realm="6"].character-click-impact::before{animation:none!important}
+}
+</style>
 </head>
 <body>
 <main class="game">
@@ -871,7 +891,7 @@ body.ascended .scene{background-image:url("data:image/png;base64,iVBORw0KGgoAAAA
       spiritParticles.push({x:sx+Math.cos(a)*dist,y:sy+Math.sin(a)*dist,tx:p.x,ty:p.y,life:0,duration:1.05+Math.random()*.55,size:1.5+Math.random()*1.8,active:true});
     }}
     spiritParticles=spiritParticles.slice(-90);spiritPulse=1;
-    const floater=document.createElement("span");floater.className="cultivation-float";floater.textContent="+"+fmt(gain);floater.style.left=Math.max(12,Math.min(p.w-55,sx))+"px";floater.style.top=Math.max(24,Math.min(p.h-32,sy))+"px";$("scene").appendChild(floater);setTimeout(()=>floater.remove(),660);
+    const floater=document.createElement("span");floater.className="cultivation-float";floater.textContent="+"+fmt(gain);floater.style.left=Math.max(12,Math.min(p.w-55,sx+38))+"px";floater.style.top=Math.max(24,Math.min(p.h-65,sy-65))+"px";$("scene").appendChild(floater);setTimeout(()=>floater.remove(),660);
   }
   function spiritUpgrade(){spiritPulse=1.4;$("scene").classList.remove("spirit-upgraded");void $("scene").offsetWidth;$("scene").classList.add("spirit-upgraded");}
   function spiritBreakthrough(){spiritPulse=2;const el=$("realmFlash");el.classList.remove("show");void el.offsetWidth;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),900);}
