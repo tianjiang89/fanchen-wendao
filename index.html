@@ -406,6 +406,13 @@ body.ascended .scene{background-image:url("data:image/png;base64,iVBORw0KGgoAAAA
  #scene #meditator[data-realm="6"].character-click-impact::before{animation:none!important}
 }
 </style>
+
+<style id="mvp21-qi-style">
+.qi-cycle-wrap{margin-top:9px;display:flex;align-items:center;gap:9px;font-size:11px;color:#b7d9c5;letter-spacing:.3px;pointer-events:none}
+.qi-cycle-track{flex:1;height:5px;border-radius:8px;background:rgba(138,183,157,.2);overflow:hidden}
+.qi-cycle-fill{height:100%;width:0;background:linear-gradient(90deg,#4a9978,#d1ca83);transition:width .16s linear}
+.qi-cycle-flash .qi-cycle-fill{filter:brightness(1.8)}
+</style>
 </head>
 <body>
 <main class="game">
@@ -420,6 +427,7 @@ body.ascended .scene{background-image:url("data:image/png;base64,iVBORw0KGgoAAAA
       <div class="bar-meta"><span>修为积累</span><b id="cultivationText">0 / 100</b></div>
       <div class="bar"><div class="fill" id="cultivationFill"></div></div>
     </div>
+    <div class="qi-cycle-wrap" id="qiCycleWrap" aria-label="灵气周天进度"><span>灵气周天</span><div class="qi-cycle-track"><div class="qi-cycle-fill" id="qiCycleFill"></div></div><span id="qiCycleCount">0/20</span></div>
   </section>
 
   <section class="panel trial" id="trialPanel">
@@ -499,7 +507,7 @@ body.ascended .scene{background-image:url("data:image/png;base64,iVBORw0KGgoAAAA
   // 5 秒结束后按点击次数判定成功率：1–20 次 40%，21–80 次 70%，81 次起必定成功。
   const SAVE_KEY = "fanchen_wendao_mvp_2_v1";
   const LEGACY_SAVE_KEY = "fanchen_wendao_mvp_v1";
-  let state = {realm:0, power:0, total:0, breakthroughs:0, trial:0, inTrial:false, qiDanLevel:0, immortalFlipped:false,immortalEssence:0,immortalEssencePurchased:0,breathLevel:0,arrayLevel:0,cycleLevel:0};
+  let state = {realm:0, power:0, total:0, breakthroughs:0, trial:0, inTrial:false, qiDanLevel:0, immortalFlipped:false,immortalEssence:0,immortalEssencePurchased:0,breathLevel:0,arrayLevel:0,cycleLevel:0,cycleQi:0,autoQiRemainder:0};
   const $ = id => document.getElementById(id);
   const fmt = n => Math.floor(n).toLocaleString("zh-CN");
   function need(){ return 100 * Math.pow(2, state.realm); }
@@ -509,13 +517,33 @@ body.ascended .scene{background-image:url("data:image/png;base64,iVBORw0KGgoAAAA
   function load(){
     try{
       const raw=localStorage.getItem(SAVE_KEY) || localStorage.getItem(LEGACY_SAVE_KEY);
-      if(raw){const parsed=JSON.parse(raw); if(parsed && Number.isInteger(parsed.realm) && parsed.realm>=0 && parsed.realm<realms.length) state={...state,...parsed,qiDanLevel:Math.max(0,Math.min(12,Number(parsed.qiDanLevel)||0)),immortalEssence:Math.max(0,Math.min(2,Math.floor(Number(parsed.immortalEssence)||0))),immortalEssencePurchased:Math.max(0,Math.floor(Number(parsed.immortalEssencePurchased ?? parsed.immortalEssence)||0)),breathLevel:Math.max(0,Math.min(10,Math.floor(Number(parsed.breathLevel)||0))),arrayLevel:Math.max(0,Math.min(10,Math.floor(Number(parsed.arrayLevel)||0))),cycleLevel:Math.max(0,Math.min(6,Math.floor(Number(parsed.cycleLevel)||0)))};}
+      if(raw){const parsed=JSON.parse(raw); if(parsed && Number.isInteger(parsed.realm) && parsed.realm>=0 && parsed.realm<realms.length) state={...state,...parsed,qiDanLevel:Math.max(0,Math.min(12,Number(parsed.qiDanLevel)||0)),immortalEssence:Math.max(0,Math.min(2,Math.floor(Number(parsed.immortalEssence)||0))),immortalEssencePurchased:Math.max(0,Math.floor(Number(parsed.immortalEssencePurchased ?? parsed.immortalEssence)||0)),breathLevel:Math.max(0,Math.min(10,Math.floor(Number(parsed.breathLevel)||0))),arrayLevel:Math.max(0,Math.min(10,Math.floor(Number(parsed.arrayLevel)||0))),cycleLevel:Math.max(0,Math.min(6,Math.floor(Number(parsed.cycleLevel)||0))),cycleQi:Math.max(0,Math.min(19.999,Number(parsed.cycleQi)||0)),autoQiRemainder:Math.max(0,Math.min(4.999,Number(parsed.autoQiRemainder)||0))};}
     }catch(e){}
   }
+
+  // MVP 2.1：独立灵气周天，不覆盖旧版周天倍率及旧存档字段。
+  const QI_CAP=20, QI_REWARD=10;
+  function cycleGain(amount){
+    if(!Number.isFinite(amount)||amount<=0)return;
+    state.cycleQi=Math.max(0,(Number(state.cycleQi)||0)+amount);
+    const rounds=Math.floor((state.cycleQi+1e-8)/QI_CAP);
+    if(rounds>0){
+      state.cycleQi=Math.max(0,state.cycleQi-rounds*QI_CAP);
+      const reward=rounds*QI_REWARD;
+      state.power+=reward;state.total+=reward;
+      const bar=$('qiCycleWrap');if(bar){bar.classList.remove('qi-cycle-flash');void bar.offsetWidth;bar.classList.add('qi-cycle-flash');}
+    }
+  }
+  function renderCycleQi(){
+    const v=Math.max(0,Math.min(QI_CAP,Number(state.cycleQi)||0));
+    $('qiCycleFill').style.width=(v/QI_CAP*100)+'%';
+    $('qiCycleCount').textContent=(Math.floor(v*10)/10).toLocaleString('zh-CN')+'/20';
+  }
+
   const techSpecs={breath:{key:"breathLevel",max:10,unlock:0,base:12,growth:1.9},array:{key:"arrayLevel",max:10,unlock:1,base:80,growth:2.1},cycle:{key:"cycleLevel",max:6,unlock:3,base:600,growth:3}};
   const multiplier=()=>Math.pow(1.5,state.cycleLevel);
   const clickGain=()=> (1+state.qiDanLevel+100*state.immortalEssencePurchased+2*state.breathLevel)*multiplier();
-  const autoGain=()=>2*state.arrayLevel*multiplier();
+  const autoGain=()=> (state.realm>=1?1:0)+2*state.arrayLevel*multiplier();
   const techCost=(type)=>{const t=techSpecs[type];return Math.ceil(t.base*Math.pow(t.growth,state[t.key]));};
   function renderTech(){
     $("clickRate").textContent=fmt(clickGain());$("autoRate").textContent=fmt(autoGain());
@@ -530,15 +558,19 @@ body.ascended .scene{background-image:url("data:image/png;base64,iVBORw0KGgoAAAA
   }
   function buyTechnique(type){
     const t=techSpecs[type];if(!t||state.realm<t.unlock||state[t.key]>=t.max||orbPhase!=="idle")return;
-    const cost=techCost(type);if(state.power<cost){toast("修为不足，需要 "+fmt(cost)+" 点修为");return;}
+    const cost=techCost(type);if(state.power<cost){toast("修为不足，还差 "+fmt(Math.ceil(cost-state.power))+" 点修为");return;}
     state.power-=cost;state[t.key]++;render();save();toast("修炼法门已精进");spiritUpgrade();
   }
   let lastAutoAt=performance.now();
   function autoTick(){
     const now=performance.now(),elapsed=Math.max(0,Math.min(1,(now-lastAutoAt)/1000));lastAutoAt=now;
-    if(document.hidden||orbPhase!=="idle"||$("shopScreen").style.display==="block"||$("heavenConfirm").classList.contains("show")||$("devOverlay").style.display==="flex")return;
+    if(document.hidden||orbPhase!=="idle"||$("heavenConfirm").classList.contains("show")||$("devOverlay").style.display==="flex")return;
     const gain=autoGain()*elapsed;if(gain<=0)return;
-    state.power+=gain;state.total+=gain;render();save();
+    state.power+=gain;state.total+=gain;
+    state.autoQiRemainder=(Number(state.autoQiRemainder)||0)+gain;
+    const autoQi=Math.floor(state.autoQiRemainder/5);
+    if(autoQi){state.autoQiRemainder-=autoQi*5;cycleGain(autoQi);}
+    render();save();
   }
   document.addEventListener("visibilitychange",()=>{lastAutoAt=performance.now();});
   setInterval(autoTick,200);
@@ -641,6 +673,7 @@ body.ascended .scene{background-image:url("data:image/png;base64,iVBORw0KGgoAAAA
     $("marketFill").style.width=Math.min(100,state.power/need()*100)+"%";
     updateMarketAccess();
     renderTech();
+    renderCycleQi();
     renderQiDanProgress();
     updateImmortalCard();
   }
@@ -751,6 +784,7 @@ body.ascended .scene{background-image:url("data:image/png;base64,iVBORw0KGgoAAAA
     const gain=clickGain();
     state.power+=gain;
     state.total+=gain;
+    cycleGain(1);
     render();save();
   }
   $("tribulationButton").addEventListener("click",()=>{
@@ -794,7 +828,7 @@ body.ascended .scene{background-image:url("data:image/png;base64,iVBORw0KGgoAAAA
       animateUI(card);
       if(state.immortalEssence>=2){toast("仙髓已凝聚圆满（2/2）");return;}
       const essenceCost=state.immortalEssence===0?50000:100000;
-      if(state.power<essenceCost){toast("修为不足，凝聚仙髓需要 "+fmt(essenceCost)+" 修为");return;}
+      if(state.power<essenceCost){toast("修为不足，还差 "+fmt(Math.ceil(essenceCost-state.power))+" 点修为");return;}
       state.power-=essenceCost;
       state.immortalEssence++;
       state.immortalEssencePurchased++;
@@ -813,7 +847,7 @@ body.ascended .scene{background-image:url("data:image/png;base64,iVBORw0KGgoAAAA
     if(state.qiDanLevel>=10){toast("聚气丹已达凡阶上限，待化仙后凝聚仙髓");return;}
     if(state.inTrial){toast("渡劫期间无法购买");return;}
     const cost=qiCost();
-    if(state.power<cost){toast("修为不足，需要 "+fmt(cost)+" 点修为");return;}
+    if(state.power<cost){toast("修为不足，还差 "+fmt(Math.ceil(cost-state.power))+" 点修为");return;}
     state.power-=cost;
     state.qiDanLevel++;
     render();save();
